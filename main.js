@@ -27,14 +27,18 @@ function startAnimation() {
     for (const fire of fires) {
         fire.draw();
         fire.update();
+        fire.collusion();
+
     }
     for (const leaf of leafs) {
         leaf.draw();
         leaf.update();
+        leaf.collusion();
     }
     for (const water of waters) {
         water.draw();
         water.update();
+        water.collusion();
     }
 
 
@@ -43,22 +47,33 @@ function startAnimation() {
 
 
 class Fire {
-    constructor(x, y, velX, velY, size) {
+    constructor(x, y, velX, velY, size, src) {
         this.x = x;
         this.y = y;
         this.velX = velX;
         this.velY = velY;
         this.size = size;
+        this.src = src;
     }
     draw() {
-        const img = document.getElementById('fireimg');
+        const img = document.getElementById(this.src);
         ctx.drawImage(img, this.x, this.y, 10, 10);
 
 
 
     }
     collusion() {
+        for (const water of waters) {
+            const dx = this.x - water.x;
+            const dy = this.y - water.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < this.size + water.size) {
 
+                this.src = 'waterimg';
+
+
+            }
+        }
 
     }
     update() {
@@ -83,8 +98,10 @@ while (fires.length < 50) {
     const fire = new Fire(
         random(150, 250),
         random(0, 100),
-        random(-3, 3),
-        random(-3, 3),
+        random(-1, 1),
+        random(-1, 1),
+        10,
+        'fireimg'
     )
     fires.push(fire);
 }
@@ -92,20 +109,33 @@ while (fires.length < 50) {
 
 
 class Water {
-    constructor(x, y, velX, velY, size) {
+    constructor(x, y, velX, velY, size, src) {
         this.x = x;
         this.y = y;
         this.velX = velX;
         this.velY = velY;
         this.size = size;
+        this.src = src;
     }
     draw() {
 
-        const img = document.getElementById('waterimg');
+        const img = document.getElementById(this.src);
         ctx.drawImage(img, this.x, this.y, 10, 10);
 
     }
     collusion() {
+
+        for (const leaf of leafs) {
+            const dx = this.x - leaf.x;
+            const dy = this.y - leaf.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < this.size + leaf.size) {
+
+                this.src = 'leafimg';
+
+
+            }
+        }
 
     }
     update() {
@@ -129,8 +159,10 @@ while (waters.length < 50) {
     const water = new Water(
         random(250, 400),
         random(250, 400),
-        random(-3, 3),
-        random(-3, 3),
+        random(-1, 1),
+        random(-1, 1),
+        10,
+        'waterimg'
 
     )
     waters.push(water);
@@ -150,8 +182,17 @@ class Leaf {
         ctx.drawImage(img, this.x, this.y, 10, 10);
     }
     collusion() {
-        for (const fire of fires) {
 
+        for (const fire of fires) {
+            const dx = this.x - fire.x;
+            const dy = this.y - fire.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < this.size + fire.size) {
+
+                this.src = 'fireimg';
+
+
+            }
         }
 
     }
@@ -176,8 +217,8 @@ while (leafs.length < 50) {
     const leaf = new Leaf(
         random(0, 150),
         random(250, 400),
-        random(-3, 3),
-        random(-3, 3),
+        random(-1, 1),
+        random(-1, 1),
         10,
         'leafimg'
 
