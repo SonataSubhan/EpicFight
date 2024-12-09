@@ -20,67 +20,169 @@ function random(min, max) {
 
 button.addEventListener('click', startAnimation);
 function startAnimation() {
-    generateFires();
-    generateWaters();
-    generateLeafs();
+    ctx.clearRect(0, 0, width, height);
+    fireLabel.textContent = fires.length;
+    waterLabel.textContent = waters.length;
+    leafLabel.textContent = leafs.length;
+    for (const fire of fires) {
+        fire.draw();
+        fire.update();
+    }
+    for (const leaf of leafs) {
+        leaf.draw();
+        leaf.update();
+    }
+    for (const water of waters) {
+        water.draw();
+        water.update();
+    }
 
+
+    requestAnimationFrame(startAnimation);
 }
-class Fires {
-    constructor(x, y, velX, velY, width, height) {
+
+
+class Fire {
+    constructor(x, y, velX, velY, size) {
         this.x = x;
         this.y = y;
         this.velX = velX;
         this.velY = velY;
-        this.width = width;
-        this.height = height;
+        this.size = size;
     }
     draw() {
+        const img = document.getElementById('fireimg');
+        ctx.drawImage(img, this.x, this.y, 10, 10);
+
+
+
+    }
+    collusion() {
+
+
+    }
+    update() {
+        if (this.x + 10 >= width) {
+            this.velX = -Math.abs(this.velX)
+        }
+        if (this.x - 10 <= 0) {
+            this.velX = Math.abs(this.velX)
+        }
+        if (this.y + 10 >= height) {
+            this.velY = -Math.abs(this.velY)
+        }
+        if (this.y - 10 <= 0) {
+            this.velY = Math.abs(this.velY)
+        }
+
+        this.x += this.velX;
+        this.y += this.velY;
+    }
+}
+while (fires.length < 50) {
+    const fire = new Fire(
+        random(150, 250),
+        random(0, 100),
+        random(-3, 3),
+        random(-3, 3),
+    )
+    fires.push(fire);
+}
+
+
+
+class Water {
+    constructor(x, y, velX, velY, size) {
+        this.x = x;
+        this.y = y;
+        this.velX = velX;
+        this.velY = velY;
+        this.size = size;
+    }
+    draw() {
+
+        const img = document.getElementById('waterimg');
+        ctx.drawImage(img, this.x, this.y, 10, 10);
 
     }
     collusion() {
 
     }
     update() {
-
+        if (this.x + 10 >= width) {
+            this.velX = -Math.abs(this.velX)
+        }
+        if (this.x - 10 <= 0) {
+            this.velX = Math.abs(this.velX)
+        }
+        if (this.y + 10 >= height) {
+            this.velY = -Math.abs(this.velY)
+        }
+        if (this.y - 10 <= 0) {
+            this.velY = Math.abs(this.velY)
+        }
+        this.x += this.velX;
+        this.y += this.velY;
     }
 }
-class Waters {
-    constructor(x, y, velX, velY, width, height) {
+while (waters.length < 50) {
+    const water = new Water(
+        random(250, 400),
+        random(250, 400),
+        random(-3, 3),
+        random(-3, 3),
+
+    )
+    waters.push(water);
+}
+class Leaf {
+    constructor(x, y, velX, velY, size, src) {
         this.x = x;
         this.y = y;
         this.velX = velX;
         this.velY = velY;
-        this.width = width;
-        this.height = height;
+        this.size = size;
+        this.src = src;
     }
     draw() {
+        const img = document.getElementById(this.src)
 
+        ctx.drawImage(img, this.x, this.y, 10, 10);
     }
     collusion() {
+        for (const fire of fires) {
+
+        }
 
     }
     update() {
-
+        if (this.x + 10 >= width) {
+            this.velX = -Math.abs(this.velX)
+        }
+        if (this.x - 10 <= 0) {
+            this.velX = Math.abs(this.velX)
+        }
+        if (this.y + 10 >= height) {
+            this.velY = -Math.abs(this.velY)
+        }
+        if (this.y - 10 <= 0) {
+            this.velY = Math.abs(this.velY)
+        }
+        this.x += this.velX;
+        this.y += this.velY;
     }
 }
-class Leafs {
-    constructor(x, y, velX, velY, width, height) {
-        this.x = x;
-        this.y = y;
-        this.velX = velX;
-        this.velY = velY;
-        this.width = width;
-        this.height = height;
-    }
-    draw() {
+while (leafs.length < 50) {
+    const leaf = new Leaf(
+        random(0, 150),
+        random(250, 400),
+        random(-3, 3),
+        random(-3, 3),
+        10,
+        'leafimg'
 
-    }
-    collusion() {
-
-    }
-    update() {
-
-    }
+    )
+    leafs.push(leaf);
 }
 
 
