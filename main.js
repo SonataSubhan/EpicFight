@@ -26,27 +26,25 @@ function startAnimation() {
     leafLabel.textContent = leafs.length;
     for (const fire of fires) {
         fire.draw();
-        fire.update();
         fire.collusion();
-
-    }
-    for (const leaf of leafs) {
-        leaf.draw();
-        leaf.update();
-        leaf.collusion();
-    }
+        fire.update();
+    };
     for (const water of waters) {
         water.draw();
-        water.update();
         water.collusion();
-    }
+        water.update();
+    };
+    for (const leaf of leafs) {
+        leaf.draw();
+        leaf.collusion();
+        leaf.update();
+    };
 
 
     requestAnimationFrame(startAnimation);
 }
 
-
-class Fire {
+class Fires {
     constructor(x, y, velX, velY, size, src) {
         this.x = x;
         this.y = y;
@@ -56,59 +54,39 @@ class Fire {
         this.src = src;
     }
     draw() {
-        const img = document.getElementById(this.src);
-        ctx.drawImage(img, this.x, this.y, 10, 10);
+        const image = document.getElementById('fireimg');
 
-
+        ctx.drawImage(image, this.x, this.y, 10, 10)
 
     }
     collusion() {
-        for (const water of waters) {
+        for (let i = waters.length - 1; i >= 0; i--) {
+            const water = waters[i];
             const dx = this.x - water.x;
             const dy = this.y - water.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance < this.size + water.size) {
-
-                this.src = 'waterimg';
-
-
+                // Toqquşmada Fire qalib gəlir, Water silinir
+                waters.splice(i, 1);
+                fires.push(new Fires(water.x, water.y, water.velX, water.velY, water.size, 'fireimg'));
             }
         }
 
     }
     update() {
-        if (this.x + 10 >= width) {
-            this.velX = -Math.abs(this.velX)
-        }
-        if (this.x - 10 <= 0) {
-            this.velX = Math.abs(this.velX)
-        }
-        if (this.y + 10 >= height) {
-            this.velY = -Math.abs(this.velY)
-        }
-        if (this.y - 10 <= 0) {
-            this.velY = Math.abs(this.velY)
-        }
-
         this.x += this.velX;
         this.y += this.velY;
+
+        if (this.x + this.velX > width || this.x - this.size < 0) {
+            this.velX = -this.velX;
+        }
+        if (this.y + this.velY > height || this.y - this.size < 0) {
+            this.velY = -this.velY;
+        }
+
     }
 }
-while (fires.length < 50) {
-    const fire = new Fire(
-        random(150, 250),
-        random(0, 100),
-        random(-1, 1),
-        random(-1, 1),
-        10,
-        'fireimg'
-    )
-    fires.push(fire);
-}
-
-
-
-class Water {
+class Waters {
     constructor(x, y, velX, velY, size, src) {
         this.x = x;
         this.y = y;
@@ -118,56 +96,38 @@ class Water {
         this.src = src;
     }
     draw() {
+        const image = document.getElementById('waterimg');
 
-        const img = document.getElementById(this.src);
-        ctx.drawImage(img, this.x, this.y, 10, 10);
+        ctx.drawImage(image, this.x, this.y, 10, 10)
 
     }
     collusion() {
-
-        for (const leaf of leafs) {
+        for (let i = leafs.length - 1; i >= 0; i--) {
+            const leaf = leafs[i];
             const dx = this.x - leaf.x;
             const dy = this.y - leaf.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance < this.size + leaf.size) {
-
-                this.src = 'leafimg';
-
-
+                // Toqquşmada Water qalib gəlir, Leaf silinir
+                leafs.splice(i, 1);
+                waters.push(new Waters(leaf.x, leaf.y, leaf.velX, leaf.velY, leaf.size, 'waterimg'));
             }
         }
-
     }
     update() {
-        if (this.x + 10 >= width) {
-            this.velX = -Math.abs(this.velX)
-        }
-        if (this.x - 10 <= 0) {
-            this.velX = Math.abs(this.velX)
-        }
-        if (this.y + 10 >= height) {
-            this.velY = -Math.abs(this.velY)
-        }
-        if (this.y - 10 <= 0) {
-            this.velY = Math.abs(this.velY)
-        }
         this.x += this.velX;
         this.y += this.velY;
+
+        if (this.x + this.velX > width || this.x - this.size < 0) {
+            this.velX = -this.velX;
+        }
+        if (this.y + this.velY > height || this.y - this.size < 0) {
+            this.velY = -this.velY;
+        }
+
     }
 }
-while (waters.length < 50) {
-    const water = new Water(
-        random(250, 400),
-        random(250, 400),
-        random(-1, 1),
-        random(-1, 1),
-        10,
-        'waterimg'
-
-    )
-    waters.push(water);
-}
-class Leaf {
+class Leafs {
     constructor(x, y, velX, velY, size, src) {
         this.x = x;
         this.y = y;
@@ -177,54 +137,39 @@ class Leaf {
         this.src = src;
     }
     draw() {
-        const img = document.getElementById(this.src)
+        const image = document.getElementById('leafimg');
 
-        ctx.drawImage(img, this.x, this.y, 10, 10);
+        ctx.drawImage(image, this.x, this.y, 10, 10)
+
     }
     collusion() {
-
-        for (const fire of fires) {
+        for (let i = fires.length - 1; i >= 0; i--) {
+            const fire = fires[i];
             const dx = this.x - fire.x;
             const dy = this.y - fire.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance < this.size + fire.size) {
-
-                this.src = 'fireimg';
-
-
+                // Toqquşmada Leaf qalib gəlir, Fire silinir
+                fires.splice(i, 1);
+                leafs.push(new Leafs(fire.x, fire.y, fire.velX, fire.velY, fire.size, 'leafimg'));
             }
         }
-
     }
     update() {
-        if (this.x + 10 >= width) {
-            this.velX = -Math.abs(this.velX)
-        }
-        if (this.x - 10 <= 0) {
-            this.velX = Math.abs(this.velX)
-        }
-        if (this.y + 10 >= height) {
-            this.velY = -Math.abs(this.velY)
-        }
-        if (this.y - 10 <= 0) {
-            this.velY = Math.abs(this.velY)
-        }
         this.x += this.velX;
         this.y += this.velY;
+
+        if (this.x + this.velX > width || this.x - this.size < 0) {
+            this.velX = -this.velX;
+        }
+        if (this.y + this.velY > height || this.y - this.size < 0) {
+            this.velY = -this.velY;
+        }
+
     }
 }
-while (leafs.length < 50) {
-    const leaf = new Leaf(
-        random(0, 150),
-        random(250, 400),
-        random(-1, 1),
-        random(-1, 1),
-        10,
-        'leafimg'
-
-    )
-    leafs.push(leaf);
+for (let i = 0; i < 50; i++) {
+    fires.push(new Fires(random(150, 250), random(0, 150), random(-2, 2), random(-2, 2), 10, 'fireimg'));
+    waters.push(new Waters(random(50, 150), random(250, 400), random(-2, 2), random(-2, 2), 10, 'waterimg'));
+    leafs.push(new Leafs(random(350, 400), random(250, 400), random(-2, 2), random(-2, 2), 10, 'leafimg'));
 }
-
-
-
